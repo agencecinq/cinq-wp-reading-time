@@ -3,7 +3,7 @@
  * Plugin Name: CINQ Reading Time
  * Plugin URI: https://github.com/agencecinq/cinq-wp-reading-time
  * Description: Stores an estimated reading time (minutes) on posts and exposes a raw integer. No markup, no settings screen.
- * Version: 1.0.2
+ * Version: 1.1.0
  * Author: CINQ
  * Author URI: https://agencecinq.com/
  * Requires at least: 6.0
@@ -24,6 +24,11 @@ const CINQ_READING_TIME_META_KEY = '_cinq_reading_time';
  * Default words-per-minute used for the estimate.
  */
 const CINQ_READING_TIME_WPM = 200;
+
+/**
+ * Default post types that store a reading time on save.
+ */
+const CINQ_READING_TIME_POST_TYPES = array( 'post' );
 
 /**
  * Estimated reading time in minutes for a post.
@@ -78,7 +83,22 @@ function cinq_reading_time_estimate( string $content ): int {
 }
 
 /**
- * Persist reading time when a post is saved.
+ * Post types that store a reading time on save.
+ *
+ * @return array<int, string>
+ */
+function cinq_reading_time_post_types(): array {
+	$post_types = apply_filters( 'cinq_reading_time_post_types', CINQ_READING_TIME_POST_TYPES );
+
+	if ( ! is_array( $post_types ) ) {
+		return array();
+	}
+
+	return array_values( array_filter( $post_types, 'is_string' ) );
+}
+
+/**
+ * Persist reading time when a post of a configured type is saved.
  *
  * @param int      $post_id Post ID.
  * @param \WP_Post $post    Post object.
@@ -86,6 +106,10 @@ function cinq_reading_time_estimate( string $content ): int {
  */
 function cinq_reading_time_save_post( int $post_id, $post ): void {
 	if ( ! $post instanceof \WP_Post ) {
+		return;
+	}
+
+	if ( ! in_array( $post->post_type, cinq_reading_time_post_types(), true ) ) {
 		return;
 	}
 
@@ -107,4 +131,4 @@ function cinq_reading_time_save_post( int $post_id, $post ): void {
 	delete_post_meta( $post_id, CINQ_READING_TIME_META_KEY );
 }
 
-add_action( 'save_post_post', 'cinq_reading_time_save_post', 10, 2 );
+add_action( 'save_post', 'cinq_reading_time_save_post', 10, 2 );

@@ -39,11 +39,14 @@ $minutes = cinq_reading_time();
 $minutes = cinq_reading_time( 42 ); // int, 0 when empty
 ```
 
-Stored under the private meta key `_cinq_reading_time`. Recalculated on every post save. When the meta is missing, the value is estimated from `post_content`.
+Stored under the private meta key `_cinq_reading_time`. Recalculated on every save for the configured post types. When the meta is missing, the value is estimated from `post_content`, whatever the post type.
 
-### Optional filter
+### Optional filters
 
 ```php
+// Post types that store a reading time on save (default: post).
+add_filter( 'cinq_reading_time_post_types', fn () => array( 'post', 'guide' ) );
+
 // Words per minute (default: 200).
 add_filter( 'cinq_reading_time_wpm', fn () => 180 );
 ```
@@ -67,5 +70,5 @@ if ( $minutes > 0 ) {
 
 ## Scope
 
-- Post type: `post` only
+- Post types: `post` by default, more through `cinq_reading_time_post_types`
 - No options, no admin UI, no shortcode, no front-end assets
