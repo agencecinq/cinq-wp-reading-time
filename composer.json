@@ -2,7 +2,7 @@
 	"name": "agencecinq/cinq-wp-reading-time",
 	"description": "Stores an estimated reading time (minutes) on posts and exposes a raw integer.",
 	"type": "wordpress-plugin",
-	"license": "proprietary",
+	"license": "MIT",
 	"require": {
 		"php": ">=8.1"
 	},

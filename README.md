@@ -72,3 +72,7 @@ if ( $minutes > 0 ) {
 
 - Post types: `post` by default, more through `cinq_reading_time_post_types`
 - No options, no admin UI, no shortcode, no front-end assets
+
+## License
+
+MIT © [CINQ](https://agencecinq.com)
