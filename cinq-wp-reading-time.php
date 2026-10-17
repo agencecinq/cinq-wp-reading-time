@@ -12,7 +12,7 @@
  * License URI: https://opensource.org/licenses/MIT
  * Text Domain: cinq-wp-reading-time
  *
- * @package CinqReadingTime
+ * @package CinqWpReadingTime
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,17 +20,17 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Post meta key for the stored reading time (minutes).
  */
-const CINQ_READING_TIME_META_KEY = '_cinq_reading_time';
+const CINQ_WP_READING_TIME_META_KEY = '_cinq_reading_time';
 
 /**
  * Default words-per-minute used for the estimate.
  */
-const CINQ_READING_TIME_WPM = 200;
+const CINQ_WP_READING_TIME_WPM = 200;
 
 /**
  * Default post types that store a reading time on save.
  */
-const CINQ_READING_TIME_POST_TYPES = array( 'post' );
+const CINQ_WP_READING_TIME_POST_TYPES = array( 'post' );
 
 /**
  * Estimated reading time in minutes for a post.
@@ -41,7 +41,7 @@ const CINQ_READING_TIME_POST_TYPES = array( 'post' );
  * @param int $post_id Post ID. Defaults to the current post in the loop.
  * @return int Minutes (0 when empty or unavailable).
  */
-function cinq_reading_time( int $post_id = 0 ): int {
+function cinq_wp_reading_time( int $post_id = 0 ): int {
 	if ( $post_id <= 0 ) {
 		$post_id = (int) get_the_ID();
 	}
@@ -50,13 +50,13 @@ function cinq_reading_time( int $post_id = 0 ): int {
 		return 0;
 	}
 
-	$stored = get_post_meta( $post_id, CINQ_READING_TIME_META_KEY, true );
+	$stored = get_post_meta( $post_id, CINQ_WP_READING_TIME_META_KEY, true );
 
 	if ( is_numeric( $stored ) && (int) $stored > 0 ) {
 		return (int) $stored;
 	}
 
-	return cinq_reading_time_estimate( (string) get_post_field( 'post_content', $post_id ) );
+	return cinq_wp_reading_time_estimate( (string) get_post_field( 'post_content', $post_id ) );
 }
 
 /**
@@ -65,7 +65,7 @@ function cinq_reading_time( int $post_id = 0 ): int {
  * @param string $content Post content.
  * @return int At least 1 when the content is not empty, 0 otherwise.
  */
-function cinq_reading_time_estimate( string $content ): int {
+function cinq_wp_reading_time_estimate( string $content ): int {
 	$text = trim( wp_strip_all_tags( $content ) );
 
 	if ( '' === $text ) {
@@ -83,10 +83,10 @@ function cinq_reading_time_estimate( string $content ): int {
 	 *
 	 * @since 2.0.0 Renamed from `cinq_reading_time_wpm`.
 	 *
-	 * @param int $wpm Words read per minute. Default CINQ_READING_TIME_WPM. A value below 1 falls back to it.
+	 * @param int $wpm Words read per minute. Default CINQ_WP_READING_TIME_WPM. A value below 1 falls back to it.
 	 */
-	$wpm = (int) apply_filters( 'cinq_wp_reading_time_wpm', CINQ_READING_TIME_WPM );
-	$wpm = $wpm > 0 ? $wpm : CINQ_READING_TIME_WPM;
+	$wpm = (int) apply_filters( 'cinq_wp_reading_time_wpm', CINQ_WP_READING_TIME_WPM );
+	$wpm = $wpm > 0 ? $wpm : CINQ_WP_READING_TIME_WPM;
 
 	return max( 1, (int) ceil( $words / $wpm ) );
 }
@@ -96,15 +96,15 @@ function cinq_reading_time_estimate( string $content ): int {
  *
  * @return array<int, string>
  */
-function cinq_reading_time_post_types(): array {
+function cinq_wp_reading_time_post_types(): array {
 	/**
 	 * Filters the post types that store a reading time when they are saved.
 	 *
 	 * @since 2.0.0 Renamed from `cinq_reading_time_post_types`.
 	 *
-	 * @param string[] $post_types Post type names. Default CINQ_READING_TIME_POST_TYPES.
+	 * @param string[] $post_types Post type names. Default CINQ_WP_READING_TIME_POST_TYPES.
 	 */
-	$post_types = apply_filters( 'cinq_wp_reading_time_post_types', CINQ_READING_TIME_POST_TYPES );
+	$post_types = apply_filters( 'cinq_wp_reading_time_post_types', CINQ_WP_READING_TIME_POST_TYPES );
 
 	if ( ! is_array( $post_types ) ) {
 		return array();
@@ -120,12 +120,12 @@ function cinq_reading_time_post_types(): array {
  * @param \WP_Post $post    Post object.
  * @return void
  */
-function cinq_reading_time_save_post( int $post_id, $post ): void {
+function cinq_wp_reading_time_save_post( int $post_id, $post ): void {
 	if ( ! $post instanceof \WP_Post ) {
 		return;
 	}
 
-	if ( ! in_array( $post->post_type, cinq_reading_time_post_types(), true ) ) {
+	if ( ! in_array( $post->post_type, cinq_wp_reading_time_post_types(), true ) ) {
 		return;
 	}
 
@@ -137,14 +137,14 @@ function cinq_reading_time_save_post( int $post_id, $post ): void {
 		return;
 	}
 
-	$minutes = cinq_reading_time_estimate( (string) $post->post_content );
+	$minutes = cinq_wp_reading_time_estimate( (string) $post->post_content );
 
 	if ( $minutes > 0 ) {
-		update_post_meta( $post_id, CINQ_READING_TIME_META_KEY, $minutes );
+		update_post_meta( $post_id, CINQ_WP_READING_TIME_META_KEY, $minutes );
 		return;
 	}
 
-	delete_post_meta( $post_id, CINQ_READING_TIME_META_KEY );
+	delete_post_meta( $post_id, CINQ_WP_READING_TIME_META_KEY );
 }
 
-add_action( 'save_post', 'cinq_reading_time_save_post', 10, 2 );
+add_action( 'save_post', 'cinq_wp_reading_time_save_post', 10, 2 );

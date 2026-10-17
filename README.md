@@ -35,8 +35,8 @@ To install it as a regular plugin, copy the folder to `wp-content/plugins/cinq-w
 
 ```php
 // Minutes for the current post in the Loop, or a given ID.
-$minutes = cinq_reading_time();
-$minutes = cinq_reading_time( 42 ); // int, 0 when empty
+$minutes = cinq_wp_reading_time();
+$minutes = cinq_wp_reading_time( 42 ); // int, 0 when empty
 ```
 
 Stored under the private meta key `_cinq_reading_time`. Recalculated on every save for the configured post types. When the meta is missing, the value is estimated from `post_content`, whatever the post type.
@@ -56,8 +56,8 @@ add_filter( 'cinq_wp_reading_time_wpm', fn () => 180 );
 In the template, inside the Loop. Formatting stays in the theme. This plugin only returns the number of minutes.
 
 ```php
-$minutes = function_exists( 'cinq_reading_time' )
-	? cinq_reading_time()
+$minutes = function_exists( 'cinq_wp_reading_time' )
+	? cinq_wp_reading_time()
 	: 0;
 
 if ( $minutes > 0 ) {
@@ -75,14 +75,21 @@ if ( $minutes > 0 ) {
 
 ## Migration from 1.x
 
-2.0.0 names the hooks after the plugin slug, like every CINQ plugin: `cinq-wp-reading-time` gives the `cinq_wp_reading_time_` prefix. The old names are not kept.
+2.0.0 names the hooks, functions and constants after the plugin slug, like every CINQ plugin: `cinq-wp-reading-time` gives the `cinq_wp_reading_time_` prefix. The old names are not kept.
 
-| 1.x | 2.0.0 |
-| --- | --- |
-| `cinq_reading_time_post_types` | `cinq_wp_reading_time_post_types` |
-| `cinq_reading_time_wpm` | `cinq_wp_reading_time_wpm` |
+| | 1.x | 2.0.0 |
+| --- | --- | --- |
+| Filter | `cinq_reading_time_post_types` | `cinq_wp_reading_time_post_types` |
+| Filter | `cinq_reading_time_wpm` | `cinq_wp_reading_time_wpm` |
+| Function | `cinq_reading_time()` | `cinq_wp_reading_time()` |
+| Function | `cinq_reading_time_estimate()` | `cinq_wp_reading_time_estimate()` |
+| Function | `cinq_reading_time_post_types()` | `cinq_wp_reading_time_post_types()` |
+| Function | `cinq_reading_time_save_post()` | `cinq_wp_reading_time_save_post()` |
+| Constant | `CINQ_READING_TIME_WPM` | `CINQ_WP_READING_TIME_WPM` |
+| Constant | `CINQ_READING_TIME_POST_TYPES` | `CINQ_WP_READING_TIME_POST_TYPES` |
+| Constant | `CINQ_READING_TIME_META_KEY` | `CINQ_WP_READING_TIME_META_KEY` |
 
-Rename the filters in `add_filter()` and `remove_filter()` calls. The functions, constants and the `_cinq_reading_time` meta key keep their names.
+Rename them in the theme: filters in `add_filter()` and `remove_filter()` calls, functions where they are called, including `function_exists()` checks. The `_cinq_reading_time` meta key does not change: stored reading times are kept.
 
 ## License
 
