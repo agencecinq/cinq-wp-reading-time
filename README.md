@@ -45,10 +45,10 @@ Stored under the private meta key `_cinq_reading_time`. Recalculated on every sa
 
 ```php
 // Post types that store a reading time on save (default: post).
-add_filter( 'cinq_reading_time_post_types', fn () => array( 'post', 'guide' ) );
+add_filter( 'cinq_wp_reading_time_post_types', fn () => array( 'post', 'guide' ) );
 
 // Words per minute (default: 200).
-add_filter( 'cinq_reading_time_wpm', fn () => 180 );
+add_filter( 'cinq_wp_reading_time_wpm', fn () => 180 );
 ```
 
 ## Theme usage
@@ -70,8 +70,19 @@ if ( $minutes > 0 ) {
 
 ## Scope
 
-- Post types: `post` by default, more through `cinq_reading_time_post_types`
+- Post types: `post` by default, more through `cinq_wp_reading_time_post_types`
 - No options, no admin UI, no shortcode, no front-end assets
+
+## Migration from 1.x
+
+2.0.0 names the hooks after the plugin slug, like every CINQ plugin: `cinq-wp-reading-time` gives the `cinq_wp_reading_time_` prefix. The old names are not kept.
+
+| 1.x | 2.0.0 |
+| --- | --- |
+| `cinq_reading_time_post_types` | `cinq_wp_reading_time_post_types` |
+| `cinq_reading_time_wpm` | `cinq_wp_reading_time_wpm` |
+
+Rename the filters in `add_filter()` and `remove_filter()` calls. The functions, constants and the `_cinq_reading_time` meta key keep their names.
 
 ## License
 

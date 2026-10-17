@@ -3,7 +3,7 @@
  * Plugin Name: CINQ Reading Time
  * Plugin URI: https://github.com/agencecinq/cinq-wp-reading-time
  * Description: Stores an estimated reading time (minutes) on posts and exposes a raw integer. No markup, no settings screen.
- * Version: 1.1.0
+ * Version: 2.0.0
  * Author: CINQ
  * Author URI: https://agencecinq.com/
  * Requires at least: 6.0
@@ -78,7 +78,14 @@ function cinq_reading_time_estimate( string $content ): int {
 		return 1;
 	}
 
-	$wpm = (int) apply_filters( 'cinq_reading_time_wpm', CINQ_READING_TIME_WPM );
+	/**
+	 * Filters the reading speed used to estimate the reading time.
+	 *
+	 * @since 2.0.0 Renamed from `cinq_reading_time_wpm`.
+	 *
+	 * @param int $wpm Words read per minute. Default CINQ_READING_TIME_WPM. A value below 1 falls back to it.
+	 */
+	$wpm = (int) apply_filters( 'cinq_wp_reading_time_wpm', CINQ_READING_TIME_WPM );
 	$wpm = $wpm > 0 ? $wpm : CINQ_READING_TIME_WPM;
 
 	return max( 1, (int) ceil( $words / $wpm ) );
@@ -90,7 +97,14 @@ function cinq_reading_time_estimate( string $content ): int {
  * @return array<int, string>
  */
 function cinq_reading_time_post_types(): array {
-	$post_types = apply_filters( 'cinq_reading_time_post_types', CINQ_READING_TIME_POST_TYPES );
+	/**
+	 * Filters the post types that store a reading time when they are saved.
+	 *
+	 * @since 2.0.0 Renamed from `cinq_reading_time_post_types`.
+	 *
+	 * @param string[] $post_types Post type names. Default CINQ_READING_TIME_POST_TYPES.
+	 */
+	$post_types = apply_filters( 'cinq_wp_reading_time_post_types', CINQ_READING_TIME_POST_TYPES );
 
 	if ( ! is_array( $post_types ) ) {
 		return array();
