@@ -3,7 +3,7 @@
  * Plugin Name: CINQ Reading Time
  * Plugin URI: https://github.com/agencecinq/cinq-wp-reading-time
  * Description: Stores an estimated reading time (minutes) on posts and exposes a raw integer. No markup, no settings screen.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: CINQ
  * Author URI: https://agencecinq.com/
  * Requires at least: 6.0
@@ -113,6 +113,8 @@ function cinq_wp_reading_time_post_types(): array {
 	return array_values( array_filter( $post_types, 'is_string' ) );
 }
 
+add_action( 'save_post', 'cinq_wp_reading_time_save_post', 10, 2 );
+
 /**
  * Persist reading time when a post of a configured type is saved.
  *
@@ -146,5 +148,3 @@ function cinq_wp_reading_time_save_post( int $post_id, $post ): void {
 
 	delete_post_meta( $post_id, CINQ_WP_READING_TIME_META_KEY );
 }
-
-add_action( 'save_post', 'cinq_wp_reading_time_save_post', 10, 2 );
